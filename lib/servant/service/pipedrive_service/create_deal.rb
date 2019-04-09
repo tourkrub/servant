@@ -1,7 +1,7 @@
 module PipedriveService
   class CreateDeal < BaseService
-    def process(message:)
-      puts "create a deal"
+    def process(order_id:)
+      puts "create a deal for order_id #{order_id}"
     end
   end
 end

@@ -1,5 +1,5 @@
 class BaseService
-  def self.process(message:)
-    new.process(message: message)
+  def self.process(args)
+    new.process(args)
   end
 end

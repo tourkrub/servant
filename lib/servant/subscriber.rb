@@ -20,21 +20,36 @@ module Servant
     # end
 
     def process
-      trap(:INT) { exit }
+      Servant.logger.info("Application started")
+      
+      trap(:INT) do
+        exit
+      end
 
       connection.psubscribe("*") do |on|
         on.pmessage do |channel, event, message|
-          puts "#{channel} #{event}, #{message}"
-          call_event_handler(event, message)
+          Servant.logger.info "Received event - #{event} from #{channel}"
+          time_start = Time.now.to_f
+          res = call_event_handler(event, message)
+        rescue Exception => e
+          Servant.logger.fatal e.class.name
+          Servant.logger.fatal e.message
+          Servant.logger.fatal e.backtrace
+        ensure
+          time_diff = (Time.now.to_f - time_start).round(3)
+          Servant.logger.info "Completed in #{time_diff}s"          
         end
       end
+    ensure
+      Servant.logger.info("Application exited")
     end
   
   private
     
     def call_event_handler(event, message)
       klass_name, method_name = event.split(".")
-      Object.const_get("#{klass_name.capitalize}Event").new(message: message).send(method_name)
+      klass_name = "#{klass_name.capitalize}Event"
+      Object.const_get(klass_name).new(message: message).send(method_name)
     end
   end
   

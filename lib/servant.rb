@@ -1,4 +1,5 @@
 require "servant/version"
+require "servant/logger"
 require "servant/subscriber"
 
 require "servant/service/base_service"

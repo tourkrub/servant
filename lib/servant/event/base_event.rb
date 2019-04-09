@@ -5,5 +5,3 @@ class BaseEvent
     @message = message
   end
 end
-
-require_relative "order_event"

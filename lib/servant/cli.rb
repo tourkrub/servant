@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'thor'
-require_relative '../servant'
 
 module Servant
   # Handle the application command line parsing
@@ -22,6 +21,8 @@ module Servant
 
     desc 'start', 'start listening process'
     def start
+      require_relative '../servant'
+
       Servant::Subscriber.new.process
     end
   end

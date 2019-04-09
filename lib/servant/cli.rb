@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'thor'
+require_relative '../servant'
 
 module Servant
   # Handle the application command line parsing
@@ -17,5 +18,11 @@ module Servant
       puts "v#{Servant::VERSION}"
     end
     map %w(--version -v) => :version
+
+
+    desc 'start', 'start listening process'
+    def start
+      Servant::Subscriber.new.process
+    end
   end
 end

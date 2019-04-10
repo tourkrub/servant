@@ -9,7 +9,7 @@ class BaseEvent
 
   def send(args)
     Servant.logger.info "Processing by #{self.class.name}##{args}"
-    Servant.logger.info "   Message: #{message}"    
+    Servant.logger.info "   Message: #{message}"
     super(args)
   end
 end

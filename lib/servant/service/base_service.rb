@@ -6,11 +6,11 @@ class BaseService
   end
 
   def self.process(args = nil)
-    Servant.logger.info "   Processing by #{self.name}"
+    Servant.logger.info "   Processing by #{name}"
     Servant.logger.info "      Argruments: #{args}"
     service = new(args: args)
     service.process
-    
+
     raise "set_result must be called in the end of process" unless service.result
 
     Servant.logger.info "      Result: #{service.result}"
@@ -18,7 +18,7 @@ class BaseService
   end
 
   def set_result(success, detail)
-    self.tap { @result = {success: success, detail: detail} }
+    tap { @result = { success: success, detail: detail } }
   end
 
   def success?

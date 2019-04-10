@@ -1,4 +1,4 @@
-require 'httparty'
+require "httparty"
 
 class TKApi
   include HTTParty

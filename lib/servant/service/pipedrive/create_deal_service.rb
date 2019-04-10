@@ -1,7 +1,7 @@
 module Pipedrive
   class CreateDealService < BaseService
     def process
-      response = TKApi.create_deal(body: {order_id: args[:order_id]})
+      response = TKApi.create_deal(body: { order_id: args[:order_id] })
       set_result(response[0] == "200", response)
     end
   end

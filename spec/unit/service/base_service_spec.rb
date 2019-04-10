@@ -7,19 +7,19 @@ RSpec.describe BaseService do
       expect(service.result).to be_nil
     end
   end
-  
+
   describe "#self.process" do
     class FooService < BaseService
-        def process
-          set_result(true, "OK")
-        end
+      def process
+        set_result(true, "OK")
+      end
     end
 
     it "should set result and return self" do
       service = FooService.process(foo: :bar)
-        
+
       expect(service.is_a?(FooService)).to be true
-      expect(service.result).to eq({success: true, detail: "OK"})
+      expect(service.result).to eq(success: true, detail: "OK")
       expect(service.success?).to be true
     end
 

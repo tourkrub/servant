@@ -1,4 +1,4 @@
-lib = File.expand_path("../lib", __FILE__)
+lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "servant/version"
 
@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Sittitep Tosuwan"]
   spec.email         = ["sittitep.tos@tourkrub.co"]
 
-  spec.summary       = %q{Servant}
+  spec.summary       = "Servant"
   # spec.description   = %q{TODO: Write a longer description or delete this line.}
   # spec.homepage      = "https://google.com"
 
@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
+  spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
   spec.bindir        = "exe"
@@ -54,14 +54,14 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "tty-table", "~> 0.10.0"
   # spec.add_dependency "tty-tree", "~> 0.2.0"
   # spec.add_dependency "tty-which", "~> 0.4"
-  spec.add_dependency "pastel", "~> 0.7.2"
-  spec.add_dependency "thor", "~> 0.20.0"
-  spec.add_dependency "redis"
   spec.add_dependency "httparty"
+  spec.add_dependency "pastel", "~> 0.7.2"
+  spec.add_dependency "redis"
+  spec.add_dependency "thor", "~> 0.20.0"
 
-  spec.add_development_dependency "rubocop", "~> 0.62.0"
-  spec.add_development_dependency "byebug"
   spec.add_development_dependency "bundler", "~> 1.17"
+  spec.add_development_dependency "byebug"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rubocop", "~> 0.62.0"
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'thor'
+require "thor"
 
 module Servant
   # Handle the application command line parsing
@@ -11,17 +11,16 @@ module Servant
     # Error raised by this runner
     Error = Class.new(StandardError)
 
-    desc 'version', 'servant version'
+    desc "version", "servant version"
     def version
-      require_relative 'version'
+      require_relative "version"
       puts "v#{Servant::VERSION}"
     end
-    map %w(--version -v) => :version
+    map %w[--version -v] => :version
 
-
-    desc 'start', 'start listening process'
+    desc "start", "start listening process"
     def start
-      require_relative '../servant'
+      require_relative "../servant"
 
       Servant::Subscriber.new.process
     end

@@ -1,13 +1,13 @@
-require 'redis'
+require "redis"
 
 module Servant
   class Subscriber
-    REDIS_HOST = ENV.fetch('REDIS_HOST', '127.0.0.1').freeze
-    
+    REDIS_HOST = ENV.fetch("REDIS_HOST", "127.0.0.1").freeze
+
     attr_reader :connection, :channels
 
     def initialize
-      @connection = Redis.new({ host: REDIS_HOST })
+      @connection = Redis.new(host: REDIS_HOST)
       # @channels = []
     end
 
@@ -21,7 +21,7 @@ module Servant
 
     def process
       Servant.logger.info("Application started")
-      
+
       trap(:INT) do
         exit
       end
@@ -30,27 +30,26 @@ module Servant
         on.pmessage do |channel, event, message|
           Servant.logger.info "Received event - #{event} from #{channel}"
           time_start = Time.now.to_f
-          res = call_event_handler(event, message)
+          call_event_handler(event, message)
         rescue Exception => e
           Servant.logger.fatal e.class.name
           Servant.logger.fatal e.message
           Servant.logger.fatal e.backtrace
         ensure
           time_diff = (Time.now.to_f - time_start).round(3)
-          Servant.logger.info "Completed in #{time_diff}s"          
+          Servant.logger.info "Completed in #{time_diff}s"
         end
       end
     ensure
       Servant.logger.info("Application exited")
     end
-  
-  private
-    
+
+    private
+
     def call_event_handler(event, message)
       klass_name, method_name = event.split(".")
       klass_name = "#{klass_name.capitalize}Event"
       Object.const_get(klass_name).new(message: message).send(method_name)
     end
   end
-  
 end

@@ -23,7 +23,7 @@ module Servant
       Servant.logger.info("Application started")
 
       trap(:INT) do
-        exit
+        exit # rubocop:disable Rails/Exit
       end
 
       connection.psubscribe("*") do |on|
@@ -31,7 +31,7 @@ module Servant
           Servant.logger.info "Received event - #{event} from #{channel}"
           time_start = Time.now.to_f
           call_event_handler(event, message)
-        rescue Exception => e
+        rescue Exception => e # rubocop:disable Lint/RescueException
           Servant.logger.fatal e.class.name
           Servant.logger.fatal e.message
           Servant.logger.fatal e.backtrace

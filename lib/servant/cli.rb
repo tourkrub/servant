@@ -14,7 +14,7 @@ module Servant
     desc "version", "servant version"
     def version
       require_relative "version"
-      puts "v#{Servant::VERSION}"
+      puts "v#{Servant::VERSION}" # rubocop:disable Rails/Output
     end
     map %w[--version -v] => :version
 

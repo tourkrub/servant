@@ -1,7 +1,12 @@
 module SlackService
   class SendNotification < BaseService
-    def process(deal_id:, template:)
-      TKApi.send_slack_notification(body: {deal_id: deal_id, template: template})
+    def process
+      TKApi.send_slack_notification(
+        body: {
+          deal_id: args[:deal_id],
+          template: args[:template]
+        }
+      )
     end
   end
 end

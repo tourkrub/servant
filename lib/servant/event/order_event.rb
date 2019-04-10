@@ -1,10 +1,5 @@
 class OrderEvent < BaseEvent
   def created
-    service = PipedriveService::CreateDeal.process(order_id: message["order_id"])
-    if service.success?
-
-    else
-
-    end
+    Pipedrive::CreateDealService.process(order_id: message["order_id"])
   end
 end

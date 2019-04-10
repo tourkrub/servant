@@ -20,6 +20,7 @@ RSpec.describe BaseService do
         
       expect(service.is_a?(FooService)).to be true
       expect(service.result).to eq({success: true, detail: "OK"})
+      expect(service.success?).to be true
     end
 
     context "set_result is not called" do

@@ -14,7 +14,7 @@ docker build -t servant .
 
 run
 ```
-docker run -e "REDIS_HOST=192.168.1.141" -e "TK_API_HOST=192.168.1.141:3000/api/legacy" servant bundle exec servant start
+docker run -e "REDIS_HOST=192.168.1.141" -e "TK_API_HOST=192.168.1.141:3000/api/legacy" -it servant bundle exec servant start
 ```
 
 test

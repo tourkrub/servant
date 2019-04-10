@@ -1,5 +1,3 @@
-require 'byebug'
-
 RSpec.describe BaseService do
   describe "#initialize" do
     it "should assign args" do

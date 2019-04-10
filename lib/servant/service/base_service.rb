@@ -1,6 +1,5 @@
 class BaseService
-  attr_reader :args
-  attr_accessor :result
+  attr_reader :args, :result
 
   def initialize(args)
     @args = args
@@ -8,8 +7,21 @@ class BaseService
 
   def self.process(args)
     Servant.logger.info "   Processing by #{self.name}"
-    Servant.logger.info "     Argruments: #{args}"
-    result = new(args: args).process
-    Servant.logger.info "     Result: #{result}"
+    Servant.logger.info "      Argruments: #{args}"
+    service = new(args: args)
+    service.process
+    
+    raise "set_result must be called in the end of process" unless service.result
+
+    Servant.logger.info "      Result: #{service.result}"
+    service
+  end
+
+  def set_result(success, detail)
+    self.tap { @result = {success: success, detail: detail} }
+  end
+
+  def success?
+    result[:success]
   end
 end

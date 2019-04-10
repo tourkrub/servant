@@ -1,11 +1,11 @@
 class BaseService
   attr_reader :args, :result
 
-  def initialize(args)
+  def initialize(args = nil)
     @args = args
   end
 
-  def self.process(args)
+  def self.process(args = nil)
     Servant.logger.info "   Processing by #{self.name}"
     Servant.logger.info "      Argruments: #{args}"
     service = new(args: args)

@@ -8,7 +8,7 @@ RSpec.describe Servant::Subscriber do
       end
 
       dump_message = JSON.dump(response: "OK")
-      expect(Servant::Subscriber.new.send(:call_event_handler, "foo.bar", dump_message)).to eq("OK")
+      expect(Servant::Subscriber.new(group_id: "1", events: ["order"]).send(:call_event_handler, "foo.bar", {"message" => dump_message})).to eq("OK")
     end
   end
 end

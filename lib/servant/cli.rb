@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require "byebug"
 require "thor"
 
 module Servant
@@ -8,8 +8,7 @@ module Servant
   #
   # @api public
   class CLI < Thor
-    # Error raised by this runner
-    Error = Class.new(StandardError)
+    Interupt = Class.new(StandardError)
 
     desc "version", "servant version"
     def version
@@ -19,10 +18,28 @@ module Servant
     map %w[--version -v] => :version
 
     desc "start", "start listening process"
+    method_option :group_id, aliases: "-g", required: true
+    method_option :events, aliases: "-e", required: true
+
     def start
       require_relative "../servant"
 
-      Servant::Subscriber.new.process
+      trap(:INT) do
+        raise Interupt
+      end
+
+      Servant.logger.info("Application started")
+      Servant.logger.info("group_id: #{options[:group_id]}, events: #{options[:events]}")
+
+      @subscriber = Servant::Subscriber.new(group_id: options[:group_id], events: options[:events].split(","))
+      
+      begin
+        @subscriber.process
+      rescue Interupt
+        @subscriber.stop
+      end
+    ensure
+      Servant.logger.info("Application exited")
     end
   end
 end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "byebug"
 require "thor"
 
@@ -32,7 +33,7 @@ module Servant
       Servant.logger.info("group_id: #{options[:group_id]}, events: #{options[:events]}")
 
       @subscriber = Servant::Subscriber.new(group_id: options[:group_id], events: options[:events].split(","))
-      
+
       begin
         @subscriber.process
       rescue Interupt

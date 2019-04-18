@@ -23,13 +23,11 @@ module Servant
     end
 
     def process
-      while running do
+      while running
         fetcher = EventFetcher.new(connection, group_id, consumer_id, events, event_offset.values, block: 2000, count: 1)
         fetcher.process
-    
-        if fetcher.event
-          fetcher.event.valid? ? work(fetcher.event) : reset_event_offset(fetcher.event.name)
-        end
+
+        work(fetcher.event) if fetcher.event&.valid?
       end
     end
 
@@ -49,7 +47,6 @@ module Servant
       Servant.logger.fatal e.message
       Servant.logger.fatal e.backtrace
     ensure
-      event_offset[event.name] = event.id
       time_diff = (Time.now.to_f - time_start).round(3)
       Servant.logger.info "Completed in #{time_diff}s"
     end
@@ -59,8 +56,8 @@ module Servant
     end
 
     def init_group(event)
-      connection.xgroup(:create, event, group_id, '$')
-    rescue
+      connection.xgroup(:create, event, group_id, "$")
+    rescue StandardError
       nil
     end
 
@@ -69,8 +66,6 @@ module Servant
       klass_name = "#{klass_name.capitalize}Event"
       Object.const_get(klass_name).new(message: message).send(method_name)
     end
-
-    alias_method :reset_event_offset, :init_event_offset
   end
 
   class EventFetcher
@@ -84,9 +79,9 @@ module Servant
 
     def process
       data = connection.xreadgroup(*args)
-      unless data.empty?
-        @event = Servant::Event.new(name: data.keys[0], id: data.values.flatten[0], message: data.values.flatten[1])
-      end
+      id, message = data.values.flatten
+
+      @event = Servant::Event.new(name: data.keys[0], id: id, message: message) unless data.empty?
     end
   end
 
@@ -94,7 +89,9 @@ module Servant
     attr_reader :name, :id, :message
 
     def initialize(name:, id:, message:)
-      @name, @id, @message = name, id, message
+      @name = name
+      @id = id
+      @message = message
     end
 
     def valid?

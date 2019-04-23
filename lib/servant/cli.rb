@@ -22,6 +22,7 @@ module Servant
     method_option :events, aliases: "-e", required: true
 
     def start
+      require "#{Dir.pwd}/app.rb" rescue LoadError
       require_relative "../servant"
 
       trap(:INT) do

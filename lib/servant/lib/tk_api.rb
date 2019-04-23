@@ -1,4 +1,4 @@
-require 'httparty'
+require "httparty"
 
 class TKApi
   include HTTParty
@@ -6,12 +6,16 @@ class TKApi
   logger Servant.logger
 
   class << self
+    def render_response(response)
+      [response.code, response.message, response.body]
+    end
+
     def create_deal(options)
-      post("/pipedrive/deals", options)
+      render_response(post("/pipedrive/deals", options).response)
     end
 
     def send_slack_notification(options)
-      post("/slack/send", options)
+      render_response(post("/slack/send", options).response)
     end
   end
 end

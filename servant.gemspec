@@ -54,11 +54,11 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   # spec.add_dependency "tty-table", "~> 0.10.0"
   # spec.add_dependency "tty-tree", "~> 0.2.0"
   # spec.add_dependency "tty-which", "~> 0.4"
+  spec.add_dependency "byebug"
   spec.add_dependency "httparty"
   spec.add_dependency "pastel", "~> 0.7.2"
   spec.add_dependency "redis"
   spec.add_dependency "thor", "~> 0.20.0"
-  spec.add_dependency "byebug"
 
   spec.add_development_dependency "bundler", "~> 1.17"
   spec.add_development_dependency "rake", "~> 10.0"

@@ -55,7 +55,7 @@ module Servant
     end
 
     def init_group(event)
-      connection.xgroup(:create, event, group_id, "$")
+      connection.xgroup(:create, event, group_id, "$", mkstream: true)
     rescue StandardError
       nil
     end

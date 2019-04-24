@@ -1,32 +1,37 @@
 # Servant
 
-Servant is a module that allows you to consume messages from redis stream.
+Servant is a module that allows you to subscribe to redis stream and handle the event.
 
 ## Basic Usage
 
-### Defined Event Class
+### Define Event Class
 
-First you nend to deflinea a class and method that is going to handle the event
+First you need to define a class and method that is going to handle the event
 
 ```
+	#notification-service
+
 	class OrderEvent < BaseEvent
 		# message will return hash value of message key from redis stream record
 
 		# the name of a method must correspond to the value of event key from redis stream record, which in this case, is "order.created"
 		def created
 			#  define your business logic here
-			CreateNotificationService(user_id: message["user_id"], order_id: message["order_id"])
+			SendSlackMessageService.process(user_id: message["user_id"], order_id: message["order_id"])
+			SendConfirmationEmailService.process(user_id: message["user_id"], order_id: message["order_id"])
 		end
 	end
 ```
 
 ### Start Servant
 
-As of now, you have all it needs to handle "order.created" event. You can start servant by tying this command in your console
+As of now, you have all it needs to handle "order.created" event. You can start servant by tying this command on your console
 
 ```
-	bundle exec servant start -g "notification_service" -e "order.created"
+	bundle exec servant start -g "notification-service" -e "order.created"
 ```
+
+Options
 
 `-g` is being used to define a group of that servant. In case that you start multiple servants which belong to the same group, redis stream records of the event will be shared among them.
 `-e` is the event or events which a servant subscribes to. You could subscribe to events by defining it like this `-e order.created,order.updated,order.destroyed`
@@ -34,12 +39,14 @@ As of now, you have all it needs to handle "order.created" event. You can start 
 
 ### Publish Event
 
-To test that the servant is running fine. Let's start sending event. You can use servant gem to send an event like this
+To test that the servant is running fine. Let's start sending an event. You can use servant gem to send an event like this
 
 ```
 	Servant::Publisher.client.publish(event: "order.created", message: {order_id: 1, user_id: 1})
 ```
-or you can use plain redis client too, if you don't want install servant gem on that particular app
+
+or you can use a plain redis client too if you don't want install servant gem on that particular app
+
 ```
 	require 'redis'
 	require 'json'

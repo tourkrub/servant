@@ -4,6 +4,13 @@ Servant is a module that allows you to subscribe to redis stream and handle the 
 
 ## Basic Usage
 
+Create `servant.rb` inside config to require files. For rails, you need to add this
+
+```
+	require_relative 'application'
+	require_relative 'environment'
+```
+
 ### Define Event Class
 
 First you need to define a class and method that is going to handle the event

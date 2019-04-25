@@ -23,9 +23,9 @@ module Servant
 
     def start
       begin
-        require "#{Dir.pwd}/app.rb"
-      rescue StandardError
-        LoadError
+        require "#{Dir.pwd}/config/servant.rb"
+      rescue LoadError
+        # LoadError
       end
       require_relative "../servant"
 

@@ -25,7 +25,7 @@ module Servant
       begin
         require "#{Dir.pwd}/config/servant.rb"
       rescue LoadError
-        # LoadError
+        nil
       end
       require_relative "../servant"
 

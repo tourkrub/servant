@@ -61,5 +61,5 @@ or you can use a plain redis client too if you don't want install servant gem on
 	redis = Redis.new(url: "redis://localhost:6379")
 	
 	message = {order_id: 1, user_id: 1}
-	redis.xadd("order.created", message: JSON.dump(message))
+	redis.xadd("event:order.created", message: JSON.dump(message))
 ```

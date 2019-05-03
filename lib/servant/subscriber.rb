@@ -1,3 +1,4 @@
+require "byebug"
 require "securerandom"
 require "redis"
 
@@ -5,13 +6,14 @@ module Servant
   class Subscriber
     REDIS_HOST = ENV.fetch("REDIS_HOST", "127.0.0.1").freeze
 
-    attr_reader :connection, :group_id, :consumer_id, :events, :event_offset, :running
+    attr_reader :connection, :group_id, :consumer_id, :events, :events_with_namespace, :event_offset, :running
 
     def initialize(group_id:, consumer_id: nil, events:)
       @connection = Redis.new(host: REDIS_HOST)
       @group_id = group_id
       @consumer_id = consumer_id || SecureRandom.uuid
       @events = events
+      @events_with_namespace = events.map{|e| e.prepend("event:")}
       @event_offset = {}
 
       @events.each do |event|
@@ -23,7 +25,7 @@ module Servant
 
     def process
       while running
-        fetcher = EventFetcher.new(connection, group_id, consumer_id, events, event_offset.values, block: 2000, count: 1)
+        fetcher = EventFetcher.new(connection, group_id, consumer_id, events_with_namespace, event_offset.values, block: 2000, count: 1)
         fetcher.process
 
         work(fetcher.event) if fetcher.event&.valid?
@@ -55,9 +57,12 @@ module Servant
     end
 
     def init_group(event)
-      connection.xgroup(:create, event, group_id, "$", mkstream: true)
+      connection.xgroup(:create, "event:#{event}", group_id, "$", mkstream: true)
     rescue StandardError
       nil
+    ensure
+      connection.sadd("events", event)
+      connection.sadd("groups", group_id)
     end
 
     def call_event_handler(event, message)
@@ -80,7 +85,7 @@ module Servant
       data = connection.xreadgroup(*args)
       id, message = data.values.flatten
 
-      @event = Servant::Event.new(name: data.keys[0], id: id, message: message) unless data.empty?
+      @event = Servant::Event.new(name: data.keys[0].gsub("event:", ""), id: id, message: message) unless data.empty?
     end
   end
 

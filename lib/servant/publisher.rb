@@ -11,7 +11,7 @@ module Servant
     end
 
     def publish(event:, message:)
-      connection.xadd(event, message: JSON.dump(message))
+      connection.xadd("event:#{event}", message: JSON.dump(message))
     end
 
     class << self

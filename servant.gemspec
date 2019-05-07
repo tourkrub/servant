@@ -56,7 +56,7 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   # spec.add_dependency "tty-which", "~> 0.4"
   spec.add_dependency "httparty", "~> 0.17.0"
   spec.add_dependency "pastel", "~> 0.7.2"
-  spec.add_dependency "redis", "~> 4.0.3"
+  spec.add_dependency "redis", "~> 4.1.1"
   spec.add_dependency "thor", "~> 0.20.0"
 
   spec.add_development_dependency "bump", "~> 0.8.0"

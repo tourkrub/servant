@@ -1,4 +1,5 @@
 require "bundler/setup"
+require 'mock_redis'
 require "servant"
 
 RSpec.configure do |config|
@@ -10,5 +11,9 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  config.before(:each) do
+    Redis = MockRedis
   end
 end

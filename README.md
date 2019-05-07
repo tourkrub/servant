@@ -2,7 +2,15 @@
 
 Servant is a module that allows you to subscribe to redis stream and handle the event.
 
+## Install
+
+```
+gem 'servant', git: 'git@bitbucket.org:tourkrub/servant.git', branch: 'master'
+```
+
 ## Basic Usage
+
+Set `REDIS_HOST` env
 
 Create `servant.rb` inside config to require files. For rails, you need to add this
 
@@ -41,6 +49,7 @@ As of now, you have all it needs to handle "order.created" event. You can start 
 Options
 
 `-g` is being used to define a group of that servant. In case that you start multiple servants which belong to the same group, redis stream records of the event will be shared among them.
+
 `-e` is the event or events which a servant subscribes to. You could subscribe to events by defining it like this `-e order.created,order.updated,order.destroyed`
 
 

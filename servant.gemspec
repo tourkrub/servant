@@ -54,7 +54,6 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   # spec.add_dependency "tty-table", "~> 0.10.0"
   # spec.add_dependency "tty-tree", "~> 0.2.0"
   # spec.add_dependency "tty-which", "~> 0.4"
-  spec.add_dependency "byebug", "~> 11.0.1"
   spec.add_dependency "httparty", "~> 0.17.0"
   spec.add_dependency "pastel", "~> 0.7.2"
   spec.add_dependency "redis", "~> 4.1.0"
@@ -64,4 +63,5 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rubocop", "~> 0.62.0"
+  spec.add_development_dependency "byebug", "~> 11.0.0"
 end

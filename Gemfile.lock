@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     servant (0.1.0)
-      byebug (~> 11.0.1)
       httparty (~> 0.17.0)
       pastel (~> 0.7.2)
       redis (~> 4.1.0)
@@ -32,7 +31,7 @@ GEM
     powerpack (0.1.2)
     rainbow (3.0.0)
     rake (10.5.0)
-    redis (4.1.0)
+    redis (4.1.1)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -64,6 +63,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.17)
+  byebug (~> 11.0.0)
   rake (~> 10.0)
   rspec (~> 3.0)
   rubocop (~> 0.62.0)

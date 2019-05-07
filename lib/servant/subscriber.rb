@@ -13,7 +13,7 @@ module Servant
       @group_id = group_id
       @consumer_id = consumer_id || SecureRandom.uuid
       @events = events
-      @events_with_namespace = events.map{|e| e.prepend("event:")}
+      @events_with_namespace = events.map { |e| e.prepend("event:") }
       @event_offset = {}
 
       @events.each do |event|
@@ -25,7 +25,8 @@ module Servant
 
     def process
       while running
-        fetcher = EventFetcher.new(connection, group_id, consumer_id, events_with_namespace, event_offset.values, block: 2000, count: 1)
+        fetcher = EventFetcher.new(connection, group_id, consumer_id,
+                                   events_with_namespace, event_offset.values, block: 2000, count: 1)
         fetcher.process
 
         work(fetcher.event) if fetcher.event&.valid?

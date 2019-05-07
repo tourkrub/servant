@@ -1,5 +1,5 @@
 require "bundler/setup"
-require 'mock_redis'
+require "mock_redis"
 require "servant"
 
 RSpec.configure do |config|

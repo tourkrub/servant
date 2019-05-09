@@ -67,7 +67,7 @@ module Servant
 
     def call_event_handler(event, message)
       klass_name, method_name = event.split(".")
-      klass_name = "#{klass_name.capitalize}Event"
+      klass_name = "#{klass_name.capitalize}EventHandler"
       Object.const_get(klass_name).new(event: event, message: message).send(method_name)
     end
   end

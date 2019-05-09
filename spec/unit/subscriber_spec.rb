@@ -1,7 +1,7 @@
 RSpec.describe Servant::Subscriber do
   describe "#call_event_handler" do
     it "call method from provided constant" do
-      class FooEvent < BaseEvent
+      class FooEventHandler < Servant::EventHandler
         def bar
           message["response"]
         end

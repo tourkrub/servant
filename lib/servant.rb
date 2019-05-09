@@ -5,7 +5,7 @@ require_relative "servant/logger"
 require_relative "servant/subscriber"
 require_relative "servant/publisher"
 
-require_relative "servant/event/base_event"
+require_relative "servant/event_handler"
 
 module Servant
   class Application

@@ -10,8 +10,8 @@ module Servant
       @connection = redis
     end
 
-    def publish(event:, message:)
-      connection.xadd("event:#{event}", message: JSON.dump(message))
+    def publish(event:, message:, meta: {})
+      connection.xadd("event:#{event}", message: JSON.dump(message), meta: JSON.dump(meta))
     end
 
     class << self

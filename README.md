@@ -26,12 +26,14 @@ First you need to define a class and method that is going to handle the event
 ```
 	#notification-service
 
-	class OrderEvent < BaseEvent
+	class OrderEvent < Servant::EventHandler
 		# message will return hash value of message key from redis stream record
 
 		# the name of a method must correspond to the value of event key from redis stream record, which in this case, is "order.created"
 		def created
-			#  define your business logic here
+			# :event and :message are available methods
+			# define your business logic here
+
 			SendSlackMessageService.process(user_id: message["user_id"], order_id: message["order_id"])
 			SendConfirmationEmailService.process(user_id: message["user_id"], order_id: message["order_id"])
 		end

@@ -1,9 +1,10 @@
 require "json"
 
 class BaseEvent
-  attr_reader :message
+  attr_reader :event, :message
 
-  def initialize(message:)
+  def initialize(event:, message:)
+    @event = event
     @message = JSON.parse(message["message"])
   end
 

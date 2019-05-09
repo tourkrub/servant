@@ -10,13 +10,15 @@ gem 'servant', git: 'git@bitbucket.org:tourkrub/servant.git', branch: 'master'
 
 ## Basic Usage
 
-Set `REDIS_HOST` env
-
 Create `servant.rb` inside config to require files. For rails, you need to add this
 
 ```
 	require_relative 'application'
 	require_relative 'environment'
+
+	Servant::Application.configure do |config|
+		config.redis = Redis.new(url: YOUR_REDIS_URL)
+	end
 ```
 
 ### Define Event Class

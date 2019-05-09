@@ -13,7 +13,7 @@ module Servant
       @group_id = group_id
       @consumer_id = consumer_id || SecureRandom.uuid
       @events = events
-      @events_with_namespace = events.map { |e| e.prepend("event:") }
+      @events_with_namespace = events.map { |e| "event:#{e}" }
       @event_offset = {}
 
       @events.each do |event|

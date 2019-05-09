@@ -2,12 +2,12 @@ require "redis"
 
 module Servant
   class Publisher
-    REDIS_HOST = ENV.fetch("REDIS_HOST", "127.0.0.1").freeze
+    # REDIS_HOST = ENV.fetch("REDIS_HOST", "127.0.0.1").freeze
 
     attr_reader :connection, :channels
 
-    def initialize
-      @connection = Redis.new(host: REDIS_HOST)
+    def initialize(redis:)
+      @connection = redis
     end
 
     def publish(event:, message:)
@@ -16,7 +16,7 @@ module Servant
 
     class << self
       def client
-        @client ||= Servant::Publisher.new
+        @client ||= Servant::Publisher.new(redis: Servant::Application.config.redis)
       end
     end
   end

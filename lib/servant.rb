@@ -1,6 +1,16 @@
-require "servant/version"
-require "servant/logger"
-require "servant/subscriber"
-require "servant/publisher"
+require "dry-configurable"
 
-require "servant/event/base_event"
+require_relative "servant/version"
+require_relative "servant/logger"
+require_relative "servant/subscriber"
+require_relative "servant/publisher"
+
+require_relative "servant/event/base_event"
+
+module Servant
+  class Application
+    extend Dry::Configurable
+
+    setting :redis, nil
+  end
+end

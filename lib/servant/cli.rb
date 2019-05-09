@@ -36,7 +36,10 @@ module Servant
       Servant.logger.info("Application started")
       Servant.logger.info("group_id: #{options[:group_id]}, events: #{options[:events]}")
 
-      @subscriber = Servant::Subscriber.new(group_id: options[:group_id], events: options[:events].split(","))
+      @subscriber = Servant::Subscriber.new(
+        group_id: options[:group_id], events: options[:events].split(","),
+        redis: Application.config.redis
+      )
 
       begin
         @subscriber.process

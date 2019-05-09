@@ -1,15 +1,14 @@
 require "byebug"
 require "securerandom"
-require "redis"
 
 module Servant
   class Subscriber
-    REDIS_HOST = ENV.fetch("REDIS_HOST", "127.0.0.1").freeze
+    # REDIS_HOST = ENV.fetch("REDIS_HOST", "127.0.0.1").freeze
 
     attr_reader :connection, :group_id, :consumer_id, :events, :events_with_namespace, :event_offset, :running
 
-    def initialize(group_id:, consumer_id: nil, events:)
-      @connection = Redis.new(host: REDIS_HOST)
+    def initialize(group_id:, consumer_id: nil, events:, redis:)
+      @connection = redis
       @group_id = group_id
       @consumer_id = consumer_id || SecureRandom.uuid
       @events = events

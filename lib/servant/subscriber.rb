@@ -1,6 +1,8 @@
 require "byebug"
 require "securerandom"
 
+require_relative "event_fetcher"
+
 module Servant
   class Subscriber
     # REDIS_HOST = ENV.fetch("REDIS_HOST", "127.0.0.1").freeze
@@ -24,8 +26,8 @@ module Servant
 
     def process
       while running
-        fetcher = EventFetcher.new(connection, group_id, consumer_id,
-                                   events_with_namespace, event_offset.values, block: 2000, count: 1)
+        fetcher = Servant::EventFetcher.new(connection, group_id, consumer_id,
+                                            events_with_namespace, event_offset.values, block: 2000, count: 1)
         fetcher.process
 
         work(fetcher.event) if fetcher.event&.valid?
@@ -68,38 +70,17 @@ module Servant
     def call_event_handler(event, message)
       klass_name, method_name = event.split(".")
       klass_name = "#{klass_name.capitalize}EventHandler"
-      Object.const_get(klass_name).new(event: event, message: message).send(method_name)
-    end
-  end
 
-  class EventFetcher
-    attr_reader :connection, :args, :event
+      parsed_message = safe_json_parse(message["message"])
+      parsed_meta = safe_json_parse(message["meta"])
 
-    def initialize(connection, *args)
-      @connection = connection
-      @args = args
-      @event = nil
+      Object.const_get(klass_name).new(event: event, message: parsed_message, meta: parsed_meta).send(method_name)
     end
 
-    def process
-      data = connection.xreadgroup(*args)
-      id, message = data.values.flatten
-
-      @event = Servant::Event.new(name: data.keys[0].gsub("event:", ""), id: id, message: message) unless data.empty?
-    end
-  end
-
-  class Event
-    attr_reader :name, :id, :message
-
-    def initialize(name:, id:, message:)
-      @name = name
-      @id = id
-      @message = message
-    end
-
-    def valid?
-      !id.nil?
+    def safe_json_parse(string)
+      JSON.parse(string)
+    rescue JSON::ParserError
+      {}
     end
   end
 end

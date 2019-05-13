@@ -15,5 +15,8 @@ RSpec.configure do |config|
 
   config.before(:each) do
     Redis = MockRedis
+    Sidekiq::Worker.clear_all
   end
 end
+
+require "sidekiq/testing"

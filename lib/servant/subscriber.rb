@@ -1,11 +1,10 @@
 require "securerandom"
 
 require_relative "event_fetcher"
+require_relative "router"
 
 module Servant
   class Subscriber
-    # REDIS_HOST = ENV.fetch("REDIS_HOST", "127.0.0.1").freeze
-
     attr_reader :connection, :group_id, :consumer_id, :events, :events_with_namespace, :event_offset, :running
 
     def initialize(group_id:, consumer_id: nil, events:, redis:)
@@ -43,7 +42,8 @@ module Servant
     def work(event)
       Servant.logger.info "Received event - #{event.name}"
       time_start = Time.now.to_f
-      call_event_handler(event.name, event.message)
+
+      Servant::Router.navigate(event.name, event.parsed_message)
     rescue Exception => e # rubocop:disable Lint/RescueException
       Servant.logger.fatal e.class.name
       Servant.logger.fatal e.message
@@ -64,23 +64,6 @@ module Servant
     ensure
       connection.sadd("events", event)
       connection.sadd("groups", group_id)
-    end
-
-    def call_event_handler(event, message)
-      klass_name, method_name = event.split(".")
-      klass_name = klass_name.split("_").map(&:capitalize).join("")
-      klass_name = "#{klass_name}EventHandler"
-
-      parsed_message = safe_json_parse(message["message"])
-      parsed_meta = safe_json_parse(message["meta"])
-
-      Object.const_get(klass_name).new(event: event, message: parsed_message, meta: parsed_meta).send(method_name)
-    end
-
-    def safe_json_parse(string)
-      JSON.parse(string)
-    rescue JSON::ParserError
-      {}
     end
   end
 end

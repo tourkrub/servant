@@ -14,8 +14,8 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    Redis = MockRedis
     Sidekiq::Worker.clear_all
+    Servant::Application.config.redis = MockRedis.new
   end
 end
 

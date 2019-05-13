@@ -4,7 +4,7 @@ RSpec.describe Servant do
   end
 
   it "has redis config" do
-    expect(Servant::Application.config.redis).to eq(nil)
+    expect(Servant::Application.config.redis.class).to eq(MockRedis)
   end
 
   it "has logger" do

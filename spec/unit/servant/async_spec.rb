@@ -1,6 +1,6 @@
 RSpec.describe Servant::Async do
   before do
-    class Foo
+    class TestServantAsyncFoo
       include Servant::Async
 
       attr_accessor :baz
@@ -15,7 +15,7 @@ RSpec.describe Servant::Async do
   context "Worker" do
     describe "#perform" do
       it "return a correct value" do
-        res = FooBarWorker.new.perform("Foo", "bar", "@baz" => "baz")
+        res = TestServantAsyncFooBarWorker.new.perform("TestServantAsyncFoo", "bar", "@baz" => "baz")
 
         expect(res).to eq("baz")
       end
@@ -25,8 +25,8 @@ RSpec.describe Servant::Async do
   context "ClassMethod" do
     describe "#set_async_methods" do
       it "create worker class for this method" do
-        expect(Object.const_defined?("FooBarWorker")).to be true
-        expect(FooBarWorker.superclass).to eq(Servant::Async::Worker)
+        expect(Object.const_defined?("TestServantAsyncFooBarWorker")).to be true
+        expect(TestServantAsyncFooBarWorker.superclass).to eq(Servant::Async::Worker)
       end
     end
   end
@@ -35,7 +35,7 @@ RSpec.describe Servant::Async do
     describe "#set_async" do
       context "val nil" do
         it "return true" do
-          instance = Foo.new
+          instance = TestServantAsyncFoo.new
 
           expect(instance.set_async).to be true
         end
@@ -43,7 +43,7 @@ RSpec.describe Servant::Async do
 
       context "val false" do
         it "return false" do
-          instance = Foo.new
+          instance = TestServantAsyncFoo.new
 
           expect(instance.set_async(false)).to be false
         end
@@ -53,23 +53,23 @@ RSpec.describe Servant::Async do
     describe "#send" do
       context "async nil" do
         it "create job" do
-          instance = Foo.new
+          instance = TestServantAsyncFoo.new
           instance.baz = "baz"
           instance.send("bar")
 
-          expect(FooBarWorker.jobs.size).to eq(1)
-          expect(FooBarWorker.jobs[0]["args"]).to eq(["Foo", "bar", { "@baz" => "baz" }])
+          expect(TestServantAsyncFooBarWorker.jobs.size).to eq(1)
+          expect(TestServantAsyncFooBarWorker.jobs[0]["args"]).to eq(["TestServantAsyncFoo", "bar", { "@baz" => "baz" }])
         end
       end
 
       context "async true" do
         it "do nothing" do
-          instance = Foo.new
+          instance = TestServantAsyncFoo.new
           instance.baz = "baz"
           instance.set_async
           res = instance.send("bar")
 
-          expect(FooBarWorker.jobs.size).to eq(0)
+          expect(TestServantAsyncFooBarWorker.jobs.size).to eq(0)
           expect(res).to eq("baz")
         end
       end

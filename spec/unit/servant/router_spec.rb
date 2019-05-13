@@ -1,6 +1,6 @@
 RSpec.describe Servant::Router do
   before do
-    class Foo
+    class TestServantRouterFoo
       include Servant::Router::Routable
 
       def bar
@@ -9,11 +9,11 @@ RSpec.describe Servant::Router do
     end
 
     Servant::Router.draw do
-      on "foo", path: "Foo#bar"
+      on "foo", path: "TestServantRouterFoo#bar"
     end
 
-    @stub_foo = Foo.new
-    allow(Foo).to receive(:new).and_return(@stub_foo)
+    @stub_foo = TestServantRouterFoo.new
+    allow(TestServantRouterFoo).to receive(:new).and_return(@stub_foo)
   end
 
   describe "#draw" do

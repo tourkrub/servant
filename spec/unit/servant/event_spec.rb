@@ -6,6 +6,7 @@ RSpec.describe Servant::Event do
       expect(event.id).to eq("foo")
       expect(event.name).to eq("bar")
       expect(event.message).to eq("baz")
+      expect(event.parsed_message).to eq({})
 
       expect(event.valid?).to be true
     end

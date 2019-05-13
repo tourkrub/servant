@@ -1,7 +1,7 @@
 RSpec.describe Servant::EventFetcher do
   describe "#process" do
     it "return event object" do
-      allow_any_instance_of(MockRedis).to receive(:xreadgroup).with(nil).and_return({"foo" => ["bar","baz"]})
+      allow_any_instance_of(MockRedis).to receive(:xreadgroup).with(nil).and_return("foo" => %w[bar baz])
 
       fetcher = Servant::EventFetcher.new(MockRedis.new, nil)
       event = fetcher.process

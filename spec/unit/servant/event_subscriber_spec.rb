@@ -8,19 +8,19 @@ RSpec.describe Servant::Subscriber do
     end
   end
 
-  let(:subscriber) {TestServantSubscriber.new(redis: MockRedis.new, group_id: "foo_1", consumer_id: "bar_1", events: ["foo"])}
+  let(:subscriber) { TestServantSubscriber.new(redis: MockRedis.new, group_id: "foo_1", consumer_id: "bar_1", events: ["foo"]) }
 
   describe "#initialize" do
     it "return valid object" do
       expect(subscriber.events_with_namespace).to eq(["event:foo"])
-      expect(subscriber.event_offset).to eq({"foo"=>">"})
+      expect(subscriber.event_offset).to eq("foo" => ">")
       expect(subscriber.running).to eq(true)
     end
   end
 
   describe "#process" do
     before do
-      dumped_message = JSON.dump({message: {foo: "bar"}, meta: {bar: "baz"}})
+      dumped_message = JSON.dump(message: { foo: "bar" }, meta: { bar: "baz" })
       stub_event = Servant::Event.new(id: "foo", name: "foo.bar", message: dumped_message)
       allow_any_instance_of(Servant::EventFetcher).to receive(:process).and_return(true)
       allow_any_instance_of(Servant::EventFetcher).to receive(:event).and_return(stub_event)

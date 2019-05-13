@@ -1,4 +1,3 @@
-require "byebug"
 require "securerandom"
 
 require_relative "event_fetcher"

@@ -2,8 +2,6 @@ require "redis"
 
 module Servant
   class Publisher
-    # REDIS_HOST = ENV.fetch("REDIS_HOST", "127.0.0.1").freeze
-
     attr_reader :connection, :channels
 
     def initialize(redis:)

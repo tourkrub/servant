@@ -29,7 +29,9 @@ module Servant
 
           proc do |request|
             instance = klass.new
+            instance.set_on(name)
             instance.set_request(request)
+            instance.after_initialize
             instance.send(action)
           end
         end
@@ -37,10 +39,18 @@ module Servant
     end
 
     module Routable
-      attr_reader :request
+      attr_reader :on, :request
+
+      def set_on(on = "")
+        @on = on
+      end
 
       def set_request(request = {}) # rubocop:disable Naming/AccessorMethodName
         @request = request
+      end
+
+      def after_initialize
+        nil
       end
     end
   end

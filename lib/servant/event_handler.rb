@@ -1,13 +1,19 @@
 require "json"
 
+require_relative "async"
+require_relative "router"
+
 module Servant
   class EventHandler
+    include Servant::Async
+    include Servant::Router::Routable
+
     attr_reader :event, :message, :meta
 
-    def initialize(event:, message:, meta:)
-      @event = event
-      @message = message
-      @meta = meta
+    def after_initialize
+      @event = @on
+      @message = request["message"]
+      @meta = request["meta"]
     end
 
     def send(args)

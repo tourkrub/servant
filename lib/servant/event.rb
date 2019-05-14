@@ -10,10 +10,8 @@ module Servant
 
     def parsed_message
       h = {}
-      
       h["message"] = JSON.parse(message["message"])
       h["meta"] = JSON.parse(message["meta"])
-
       h
     rescue JSON::ParserError
       {}

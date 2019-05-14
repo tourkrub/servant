@@ -12,8 +12,8 @@ module Servant
 
     def after_initialize
       @event = @on
-      @message = request["message"]
-      @meta = request["meta"]
+      @message = @request["message"]
+      @meta = @request["meta"]
     end
 
     def send(args)

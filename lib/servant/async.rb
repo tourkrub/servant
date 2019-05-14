@@ -48,7 +48,7 @@ module Servant
 
       def get_variables(variables = {})
         instance_variables.inject(variables) do |hash, key|
-          hash[key] = instance_variable_get(key)
+          hash.merge!(key => instance_variable_get(key))
         end && variables
       end
 

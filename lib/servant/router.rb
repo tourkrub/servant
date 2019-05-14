@@ -41,7 +41,7 @@ module Servant
     module Routable
       attr_reader :on, :request
 
-      def set_on(on = "")
+      def set_on(on = "") # rubocop:disable Naming/AccessorMethodName
         @on = on
       end
 

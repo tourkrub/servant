@@ -11,7 +11,7 @@ module Servant
     end
 
     def publish(event:, message:, meta: {})
-      connection.xadd("event:#{event}", message: JSON.dump(message), meta: JSON.dump(meta))
+      connection.xadd("event:#{event}", {message: JSON.dump(message), meta: JSON.dump(meta)}, maxlen: 1000)
     end
 
     class << self

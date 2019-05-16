@@ -68,7 +68,8 @@ module Servant
 
     def call_event_handler(event, message)
       klass_name, method_name = event.split(".")
-      klass_name = "#{klass_name.capitalize}EventHandler"
+      klass_name = klass_name.split("_").map(&:capitalize).join("")
+      klass_name = "#{klass_name}EventHandler"
 
       parsed_message = safe_json_parse(message["message"])
       parsed_meta = safe_json_parse(message["meta"])

@@ -4,9 +4,13 @@ RSpec.describe Servant::Async do
       include Servant::Async
 
       attr_accessor :baz
-      set_async_methods :bar
+      set_async_methods :bar, :bar_bar
 
       def bar
+        @baz
+      end
+
+      def bar_bar
         @baz
       end
     end
@@ -19,6 +23,12 @@ RSpec.describe Servant::Async do
 
         expect(res).to eq("baz")
       end
+
+      it "return a correct value" do
+        res = TestServantAsyncFooBarBarWorker.new.perform("TestServantAsyncFoo", "bar_bar", "@baz" => "baz")
+
+        expect(res).to eq("baz")
+      end
     end
   end
 
@@ -27,6 +37,13 @@ RSpec.describe Servant::Async do
       it "create worker class for this method" do
         expect(Object.const_defined?("TestServantAsyncFooBarWorker")).to be true
         expect(TestServantAsyncFooBarWorker.superclass).to eq(Servant::Async::Worker)
+      end
+
+      context "name with underscore" do
+        it "create worker class for this method" do
+          expect(Object.const_defined?("TestServantAsyncFooBarBarWorker")).to be true
+          expect(TestServantAsyncFooBarWorker.superclass).to eq(Servant::Async::Worker)
+        end
       end
     end
   end

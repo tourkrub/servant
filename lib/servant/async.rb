@@ -28,7 +28,22 @@ module Servant
       end
     end
 
+    module Utility
+      private
+
+      def get_worker_name(klass, action)
+        name_array = []
+        name_array << klass
+        name_array += action.to_s.split("_").map(&:capitalize)
+        name_array << "Worker"
+
+        name_array.join
+      end
+    end
+
     module InstanceMethod
+      include Utility
+
       attr_reader :async
 
       def set_async(val = true) # rubocop:disable Naming/AccessorMethodName
@@ -53,7 +68,7 @@ module Servant
       end
 
       def worker_name(action)
-        "#{self.class.name}#{action.capitalize}Worker"
+        get_worker_name(self.class.name, action)
       end
 
       def worker_class(action)
@@ -66,8 +81,10 @@ module Servant
     end
 
     module ClassMethod
+      include Utility
+
       def set_async_methods(*actions) # rubocop:disable Naming/AccessorMethodName
-        raise "SiskiqRequired" unless Object.const_defined?("Sidekiq")
+        raise "SidekiqRequired" unless Object.const_defined?("Sidekiq")
 
         actions.each { |action| define_worker(action) }
       end
@@ -75,7 +92,7 @@ module Servant
       private
 
       def define_worker(action)
-        Object.const_set("#{name}#{action.capitalize}Worker", Class.new(Servant::Async::Worker))
+        Object.const_set(get_worker_name(name, action), Class.new(Servant::Async::Worker))
       end
     end
   end

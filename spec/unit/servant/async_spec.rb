@@ -1,17 +1,21 @@
 RSpec.describe Servant::Async do
-  before do
+  before(:all) do
     class TestServantAsyncFoo
       include Servant::Async
 
-      attr_accessor :baz
-      set_async_methods :bar, :bar_bar
+      attr_accessor :baz, :foo, :bar
+      set_async_methods :method_one, :method_two, :method_three
 
-      def bar
+      def method_one
         @baz
       end
 
-      def bar_bar
+      def method_two
         @baz
+      end
+
+      def method_three
+        [@baz, @foo, @bar]
       end
     end
   end
@@ -19,30 +23,38 @@ RSpec.describe Servant::Async do
   context "Worker" do
     describe "#perform" do
       it "return a correct value" do
-        res = TestServantAsyncFooBarWorker.new.perform("TestServantAsyncFoo", "bar", "@baz" => "baz")
+        res = TestServantAsyncFooMethodOneWorker.new.perform("TestServantAsyncFoo", "method_one", "@baz" => "baz")
 
         expect(res).to eq("baz")
       end
 
       it "return a correct value" do
-        res = TestServantAsyncFooBarBarWorker.new.perform("TestServantAsyncFoo", "bar_bar", "@baz" => "baz")
+        res = TestServantAsyncFooMethodTwoWorker.new.perform("TestServantAsyncFoo", "method_two", "@baz" => "baz")
 
         expect(res).to eq("baz")
       end
+
+      it "return a correct value" do
+        res = TestServantAsyncFooMethodTwoWorker.new.perform("TestServantAsyncFoo", "method_three", "@bar"=>"\u0004\bo:\vObject\u0000", "@baz"=>"\u0004\bI\"\bbaz\u0006:\u0006ET", "@foo"=>"\u0004\b{\u0006I\"\bfoo\u0006:\u0006ETI\"\bbar\u0006;\u0000T")
+
+        expect(res[0]).to eq("baz")
+        expect(res[1]).to eq({"foo"=>"bar"})
+        expect(res[2].is_a?(Object)).to be true
+      end      
     end
   end
 
   context "ClassMethod" do
     describe "#set_async_methods" do
       it "create worker class for this method" do
-        expect(Object.const_defined?("TestServantAsyncFooBarWorker")).to be true
-        expect(TestServantAsyncFooBarWorker.superclass).to eq(Servant::Async::Worker)
+        expect(Object.const_defined?("TestServantAsyncFooMethodOneWorker")).to be true
+        expect(TestServantAsyncFooMethodOneWorker.superclass).to eq(Servant::Async::Worker)
       end
 
       context "name with underscore" do
         it "create worker class for this method" do
-          expect(Object.const_defined?("TestServantAsyncFooBarBarWorker")).to be true
-          expect(TestServantAsyncFooBarWorker.superclass).to eq(Servant::Async::Worker)
+          expect(Object.const_defined?("TestServantAsyncFooMethodTwoWorker")).to be true
+          expect(TestServantAsyncFooMethodOneWorker.superclass).to eq(Servant::Async::Worker)
         end
       end
     end
@@ -70,12 +82,16 @@ RSpec.describe Servant::Async do
     describe "#send" do
       context "async nil" do
         it "create job" do
+          object = Object.new
           instance = TestServantAsyncFoo.new
           instance.baz = "baz"
-          instance.send("bar")
+          instance.foo = {"foo" => "bar"}
+          instance.bar = object
 
-          expect(TestServantAsyncFooBarWorker.jobs.size).to eq(1)
-          expect(TestServantAsyncFooBarWorker.jobs[0]["args"]).to eq(["TestServantAsyncFoo", "bar", { "@baz" => "baz" }])
+          instance.send("method_one")
+
+          expect(TestServantAsyncFooMethodOneWorker.jobs.size).to eq(1)
+          expect(TestServantAsyncFooMethodOneWorker.jobs[0]["args"]).to eq(["TestServantAsyncFoo", "method_one", {"@bar"=>"\u0004\bo:\vObject\u0000", "@baz"=>"\u0004\bI\"\bbaz\u0006:\u0006ET", "@foo"=>"\u0004\b{\u0006I\"\bfoo\u0006:\u0006ETI\"\bbar\u0006;\u0000T"}])
         end
       end
 
@@ -84,9 +100,9 @@ RSpec.describe Servant::Async do
           instance = TestServantAsyncFoo.new
           instance.baz = "baz"
           instance.set_async
-          res = instance.send("bar")
+          res = instance.send("method_one")
 
-          expect(TestServantAsyncFooBarWorker.jobs.size).to eq(0)
+          expect(TestServantAsyncFooMethodOneWorker.jobs.size).to eq(0)
           expect(res).to eq("baz")
         end
       end

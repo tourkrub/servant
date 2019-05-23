@@ -14,7 +14,6 @@ module Servant
 
       def perform(klass, name, variables = nil)
         instance = Object.const_get(klass).new
-
         set_instance_variables(instance, variables)
 
         instance.set_async
@@ -24,7 +23,15 @@ module Servant
       private
 
       def set_instance_variables(instance, variables)
-        variables&.each { |k, v| instance.instance_variable_set(k, v) }
+        variables&.each do |key, value| 
+          instance.instance_variable_set(key, unpack(value)) 
+        end
+      end
+
+      def unpack(value)
+        Marshal.load(value)
+      rescue TypeError
+        value
       end
     end
 
@@ -63,7 +70,7 @@ module Servant
 
       def get_variables(variables = {})
         instance_variables.inject(variables) do |hash, key|
-          hash.merge!(key => instance_variable_get(key))
+          hash.merge!(key => Marshal.dump(instance_variable_get(key)))
         end && variables
       end
 

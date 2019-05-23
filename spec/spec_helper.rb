@@ -26,4 +26,20 @@ RSpec.configure do |config|
   end
 end
 
+# monkey patch for MockRedis Stream
+# mock_redis-0.20.0/lib/mock_redis/stream.rb:32:in `trim'
+
+class MockRedis
+  class Stream
+    def trim(count)
+      deleted = 0
+      if @members.size > count
+        deleted = @members.size - count
+        @members = @members.to_a[-count..-1].to_set
+      end
+      deleted
+    end
+  end
+end
+
 require "sidekiq/testing"

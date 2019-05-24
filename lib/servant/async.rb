@@ -1,105 +1,50 @@
-require "sidekiq"
+require "tourkrub/toolkit"
 
 module Servant
   module Async
     class << self
       def included(base)
+        const_set("ASYNC_METHODS", [])
         base.include(InstanceMethod)
         base.extend(ClassMethod)
       end
     end
 
-    class Worker
-      include Sidekiq::Worker
-
-      def perform(klass, name, variables = nil)
-        instance = Object.const_get(klass).new
-        set_instance_variables(instance, variables)
-
-        instance.set_async
-        instance.send(name)
-      end
-
-      private
-
-      def set_instance_variables(instance, variables)
-        variables&.each do |key, value| 
-          instance.instance_variable_set(key, unpack(value)) 
-        end
-      end
-
-      def unpack(value)
-        Marshal.load(value)
-      rescue TypeError
-        value
-      end
-    end
-
-    module Utility
-      private
-
-      def get_worker_name(klass, action)
-        name_array = []
-        name_array << klass
-        name_array += action.to_s.split("_").map(&:capitalize)
-        name_array << "Worker"
-
-        name_array.join
-      end
-    end
-
     module InstanceMethod
-      include Utility
-
-      attr_reader :async
-
-      def set_async(val = true) # rubocop:disable Naming/AccessorMethodName
-        @async = val
-      end
-
-      def send(name, *args)
-        if defined_worker?(name) && async.nil?
-          jid = worker_class(name).perform_async(self.class.name, name, get_variables)
-          Servant.logger.info "JID - #{jid}"
+      def send(method_name, *args, &block)
+        if async_method?(method_name) && not_from_agent
+          set_agent
+          Tourkrub::Toolkit::AsyncMethod::Agent.do_async(self, method_name, *args)
         else
-          super(name, *args)
+          super
         end
       end
 
       private
 
-      def get_variables(variables = {})
-        instance_variables.inject(variables) do |hash, key|
-          hash.merge!(key => Marshal.dump(instance_variable_get(key)))
-        end && variables
+      def set_agent
+        instance_variable_set(:@from_agent, true)
       end
 
-      def worker_name(action)
-        get_worker_name(self.class.name, action)
+      def not_from_agent
+        !@from_agent
       end
 
-      def worker_class(action)
-        Object.const_get(worker_name(action))
-      end
-
-      def defined_worker?(action)
-        Object.const_defined?(worker_name(action))
+      def async_method?(method_name)
+        self.class.const_get("ASYNC_METHODS").include?(method_name)
       end
     end
 
     module ClassMethod
-      include Utility
-
       def set_async_methods(*actions) # rubocop:disable Naming/AccessorMethodName
         raise "SidekiqRequired" unless Object.const_defined?("Sidekiq")
 
-        actions.each { |action| define_worker(action) }
-      end
+        const_set("ASYNC_METHODS", actions.map(&:to_s))
 
-      private
-
-      def define_worker(action)
-        Object.const_set(get_worker_name(name, action), Class.new(Servant::Async::Worker))
+        actions.each do |action|
+          agent = Tourkrub::Toolkit::AsyncMethod::Agent.new(new, action.to_s, nil)
+          agent.send(:worker)
+        end
       end
     end
   end

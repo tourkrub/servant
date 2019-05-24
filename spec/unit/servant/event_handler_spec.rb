@@ -1,7 +1,13 @@
 RSpec.describe Servant::EventHandler do
   describe "#send" do
     class TestServantEventHandlerFoo < Servant::EventHandler
+      set_async_methods :foo
+
       def bar
+        event
+      end
+
+      def foo
         event
       end
     end
@@ -17,6 +23,10 @@ RSpec.describe Servant::EventHandler do
       expect(instance.event).to eq("foo")
       expect(instance.message).to eq(foo: "bar")
       expect(instance.meta).to eq(bar: "baz")
+
+      instance.send("foo")
+
+      expect(FooTestServantEventHandlerFooWorker.jobs.size).to eq(1)
     end
   end
 end

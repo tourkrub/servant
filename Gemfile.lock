@@ -16,6 +16,7 @@ PATH
       redis (~> 4.1.1)
       sidekiq (~> 5.2.7)
       thor (~> 0.20.0)
+      tourkrub-toolkit (~> 0.1.0)
 
 GEM
   remote: https://rubygems.org/

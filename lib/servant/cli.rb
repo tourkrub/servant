@@ -19,7 +19,7 @@ module Servant
 
     desc "start", "start listening process"
     method_option :group_id, aliases: "-g", required: true
-    method_option :events, aliases: "-e", required: true
+    method_option :events, aliases: "-e", required: false
 
     def start
       begin
@@ -33,11 +33,13 @@ module Servant
         raise Interupt
       end
 
+      prepare_events(options[:events])
+
       Servant.logger.info("Application started")
-      Servant.logger.info("group_id: #{options[:group_id]}, events: #{options[:events]}")
+      Servant.logger.info("group_id: #{options[:group_id]}, events: #{events}")
 
       @subscriber = Servant::Subscriber.new(
-        group_id: options[:group_id], events: options[:events].split(","),
+        group_id: options[:group_id], events: events,
         redis: Application.config.redis
       )
 
@@ -49,5 +51,13 @@ module Servant
     ensure
       Servant.logger.info("Application exited")
     end
+
+    private
+
+    def prepare_events(events = nil)
+      @events = !events.nil? ? events.split(",") : Servant::Router::ROUTES.keys
+    end
+
+    attr_reader :events
   end
 end

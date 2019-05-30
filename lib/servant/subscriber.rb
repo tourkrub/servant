@@ -27,8 +27,9 @@ module Servant
         fetcher = Servant::EventFetcher.new(connection, group_id, consumer_id,
                                             events_with_namespace, event_offset.values, block: 2000, count: 1)
         fetcher.process
-
-        work(fetcher.event) if fetcher.event&.valid?
+        fetcher.events.each do |event|
+          work(event) if event&.valid?
+        end
       end
     end
 

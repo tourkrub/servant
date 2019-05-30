@@ -4,13 +4,13 @@ RSpec.describe Servant::EventFetcher do
       allow_any_instance_of(MockRedis).to receive(:xreadgroup).with(nil).and_return("foo" => %w[bar baz])
 
       fetcher = Servant::EventFetcher.new(MockRedis.new, nil)
-      event = fetcher.process
+      events = fetcher.process
 
-      expect(event.name).to eq("foo")
-      expect(event.id).to eq("bar")
-      expect(event.message).to eq("baz")
+      expect(events[0].name).to eq("foo")
+      expect(events[0].id).to eq("bar")
+      expect(events[0].message).to eq("baz")
 
-      expect(event.valid?).to be true
+      expect(events[0].valid?).to be true
     end
   end
 end

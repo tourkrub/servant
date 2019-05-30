@@ -23,7 +23,7 @@ RSpec.describe Servant::Subscriber do
       dumped_message = JSON.dump(message: { foo: "bar" }, meta: { bar: "baz" })
       stub_event = Servant::Event.new(id: "foo", name: "foo.bar", message: dumped_message)
       allow_any_instance_of(Servant::EventFetcher).to receive(:process).and_return(true)
-      allow_any_instance_of(Servant::EventFetcher).to receive(:event).and_return(stub_event)
+      allow_any_instance_of(Servant::EventFetcher).to receive(:events).and_return([stub_event])
     end
 
     context "without an error" do

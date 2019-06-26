@@ -1,6 +1,6 @@
 GIT
-  remote: git@bitbucket.org:tourkrub/tourkrub-tookit.git
-  revision: 435586019f544f25d59957ffd571cb3ee5b2ad2c
+  remote: https://bitbucket.org/tourkrub/tourkrub-tookit.git
+  revision: 4ee8e503228cb0d2b6239a951a095facf0f24bcf
   specs:
     tourkrub-toolkit (0.1.0)
       dry-struct (~> 1.0.0)
@@ -31,14 +31,14 @@ GEM
     dry-configurable (0.8.2)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.7)
-    dry-container (0.7.0)
+    dry-container (0.7.1)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.1, >= 0.1.3)
     dry-core (0.4.7)
       concurrent-ruby (~> 1.0)
     dry-equalizer (0.2.2)
     dry-inflector (0.1.2)
-    dry-logic (1.0.0)
+    dry-logic (1.0.2)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.2)
       dry-equalizer (~> 0.2)
@@ -47,7 +47,7 @@ GEM
       dry-equalizer (~> 0.2)
       dry-types (~> 1.0)
       ice_nine (~> 0.11)
-    dry-types (1.0.0)
+    dry-types (1.0.1)
       concurrent-ruby (~> 1.0)
       dry-container (~> 0.3)
       dry-core (~> 0.4, >= 0.4.4)

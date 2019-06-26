@@ -28,5 +28,20 @@ RSpec.describe Servant::EventHandler do
 
       expect(FooTestServantEventHandlerFooWorker.jobs.size).to eq(1)
     end
+
+    it "track metrics" do
+      instance = TestServantEventHandlerFoo.new
+
+      allow(instance)
+        .to receive(:metric_agent)
+        .and_return(Servant::Metrics::NullStrategy.new)
+
+      expect(instance)
+        .to receive(:increment_matric)
+        .with("Custom/Events/Bar")
+
+      instance.instance_variable_set("@on", "bar")
+      instance.send("bar")
+    end
   end
 end

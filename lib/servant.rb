@@ -7,6 +7,9 @@ require_relative "servant/publisher"
 require_relative "servant/router"
 require_relative "servant/event_handler"
 require_relative "servant/async"
+require_relative "servant/metrics/increment"
+require_relative "servant/metrics/null_strategy"
+require_relative "servant/metrics/new_relic_strategy"
 
 module Servant
   class << self
@@ -19,5 +22,9 @@ module Servant
     extend Dry::Configurable
 
     setting :redis, nil
+
+    setting :metrics do
+      setting :agent, nil
+    end
   end
 end

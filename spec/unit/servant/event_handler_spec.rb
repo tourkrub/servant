@@ -38,9 +38,9 @@ RSpec.describe Servant::EventHandler do
 
       expect(instance)
         .to receive(:increment_matric)
-        .with("Custom/Events/Bar")
+        .with("Custom/Events/bar")
 
-      instance.instance_variable_set("@on", "bar")
+      instance.instance_variable_set("@event", "bar")
       instance.send("bar")
     end
   end

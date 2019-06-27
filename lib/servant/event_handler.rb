@@ -25,7 +25,7 @@ module Servant
 
       response = super(args)
 
-      metric_name = "Custom/Events/" + on.split(".").map(&:capitalize).join
+      metric_name = "Custom/Events/" + event
       increment_matric(metric_name)
 
       response

@@ -1,5 +1,7 @@
 RSpec.describe Servant::Async do
-  before(:all) do
+  before do
+    require "tourkrub/toolkit"
+
     class TestServantAsyncFoo
       include Servant::Async
 

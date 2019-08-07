@@ -1,5 +1,3 @@
-require "tourkrub/toolkit"
-
 module Servant
   module Async
     class << self
@@ -37,7 +35,8 @@ module Servant
 
     module ClassMethod
       def set_async_methods(*actions) # rubocop:disable Naming/AccessorMethodName
-        raise "SidekiqRequired" unless Object.const_defined?("Sidekiq")
+        raise "Sidekiq is requried" unless Object.const_defined?("Sidekiq")
+        raise "Tourkrub::Toolkit::AsyncMethod is requried" unless Object.const_defined?("Tourkrub::Toolkit::AsyncMethod")
 
         const_set("ASYNC_METHODS", actions.map(&:to_s))
 

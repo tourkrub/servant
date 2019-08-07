@@ -35,8 +35,10 @@ module Servant
 
       prepare_events(options[:events])
 
-      Servant.logger.info("Application started")
-      Servant.logger.info("group_id: #{options[:group_id]}, events: #{events}")
+      Servant.logger.info """
+        Application started
+        group_id: #{options[:group_id]}, events: #{events}
+      """
 
       @subscriber = Servant::Subscriber.new(
         group_id: options[:group_id], events: events,

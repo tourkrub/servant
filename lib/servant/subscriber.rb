@@ -46,9 +46,11 @@ module Servant
 
       Servant::Router.navigate(event.name, event.parsed_message)
     rescue Exception => e # rubocop:disable Lint/RescueException
-      Servant.logger.fatal e.class.name
-      Servant.logger.fatal e.message
-      Servant.logger.fatal e.backtrace
+      Servant.logger.fatal """
+        #{e.class.name}
+        #{e.message}
+        #{e.backtrace}
+      """
     ensure
       time_diff = (Time.now.to_f - time_start).round(3)
       Servant.logger.info "Completed in #{time_diff}s"

@@ -19,9 +19,11 @@ module Servant
     end
 
     def send(args)
-      Servant.logger.info "Processing by #{self.class.name}##{args}"
-      Servant.logger.info "   Meta: #{meta}"
-      Servant.logger.info "   Message: #{message}"
+      Servant.logger.info """
+        Processing by #{self.class.name}##{args}
+          Meta: #{meta}
+          Message: #{message}
+      """
 
       response = super(args)
 

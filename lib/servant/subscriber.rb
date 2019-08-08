@@ -2,6 +2,7 @@ require "securerandom"
 
 require_relative "event_fetcher"
 require_relative "router"
+require_relative "stats"
 
 module Servant
   class Subscriber
@@ -19,6 +20,9 @@ module Servant
         init_event_offset(event)
         init_group(event)
       end
+
+      @stats = Stats.new(id: @consumer_id, group_id: @group_id, events: @events, connection: @connection)
+
       @running = true
     end
 
@@ -34,24 +38,36 @@ module Servant
     end
 
     def stop
+      stats.clean
+
       @running = false
       Servant.logger.info "Application is being gracefully stopped"
     end
 
     private
 
+    attr_reader :stats
+
     def work(event)
+      stats.incr(:processing)
       Servant.logger.info "Received event - #{event.name}"
       time_start = Time.now.to_f
 
       Servant::Router.navigate(event.name, event.parsed_message)
+      stats.log(event, "processed")
     rescue Exception => e # rubocop:disable Lint/RescueException
+      stats.log(event, "failed")
+      stats.incr(:failed)
+
       Servant.logger.fatal """
         #{e.class.name}
         #{e.message}
         #{e.backtrace}
       """
     ensure
+      stats.decr(:processing)
+      stats.incr(:processed)
+
       time_diff = (Time.now.to_f - time_start).round(3)
       Servant.logger.info "Completed in #{time_diff}s"
     end

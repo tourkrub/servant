@@ -54,10 +54,9 @@ module Servant
       time_start = Time.now.to_f
 
       Servant::Router.navigate(event.name, event.parsed_message)
-      stats.log(event, "processed")
     rescue Exception => e # rubocop:disable Lint/RescueException
-      stats.log(event, "failed")
       stats.incr(:failed)
+      stats.log(event, "failed")
 
       Servant.logger.fatal """
         #{e.class.name}
@@ -67,6 +66,7 @@ module Servant
     ensure
       stats.decr(:processing)
       stats.incr(:processed)
+      stats.log(event, "processed")
 
       time_diff = (Time.now.to_f - time_start).round(3)
       Servant.logger.info "Completed in #{time_diff}s"

@@ -22,6 +22,7 @@ module Servant
     def send(args)
       Servant.logger.info """
         Processing by #{self.class.name}##{args}
+          Correlation_id: #{correlation_id}
           Meta: #{meta}
           Message: #{message}
       """

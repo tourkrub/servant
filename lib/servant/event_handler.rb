@@ -10,12 +10,13 @@ module Servant
     include Servant::Router::Routable
     include Servant::Measurable
 
-    attr_reader :event, :message, :meta
+    attr_reader :event, :message, :meta, :correlation_id
 
     def after_initialize
       @event = @on
       @message = @request["message"]
       @meta = @request["meta"]
+      @correlation_id = @request["correlation_id"]
     end
 
     def send(args)

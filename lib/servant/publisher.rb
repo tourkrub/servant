@@ -1,3 +1,4 @@
+require "securerandom"
 require "redis"
 
 module Servant
@@ -8,8 +9,15 @@ module Servant
       @connection = redis
     end
 
-    def publish(event:, message:, meta: {})
-      connection.xadd("event:#{event}", { message: JSON.dump(message), meta: JSON.dump(meta) }, maxlen: 1000)
+    def publish(event:, message:, meta: {}, correlation_id: SecureRandom.uuid)
+      connection.xadd(
+        "event:#{event}", {
+          message: JSON.dump(message),
+          meta: JSON.dump(meta),
+          correlation_id: correlation_id
+        },
+        maxlen: 1000
+      )
     end
 
     class << self

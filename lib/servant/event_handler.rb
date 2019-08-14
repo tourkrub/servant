@@ -25,12 +25,35 @@ module Servant
           Message: #{message}
       """
 
-      response = super(args)
+      begin
+        response = super(args)
+      rescue Exception => exception # rubocop:disable Lint/RescueException
+        exception_name = exception.class.name.to_s
+        raise exception unless exception_handlers.key?(exception_name)
+
+        exception_handlers[exception_name].call(exception)
+      end
 
       metric_name = "Custom/Events/" + event
       increment_matric(metric_name)
 
       response
+    end
+
+    def exception_handlers
+      self.class.exception_handlers
+    end
+
+    class << self
+      def rescue_from(name)
+        exception_handlers[name.to_s] = proc { |error|
+          yield(error)
+        }
+      end
+
+      def exception_handlers
+        @exception_handlers ||= {}
+      end
     end
   end
 end

@@ -10,9 +10,10 @@ gem 'servant', git: 'git@bitbucket.org:tourkrub/servant.git', branch: 'master'
 
 ## Basic Usage
 
-Create `servant.rb` inside config to require files. For rails, you need to add this
+Create `config/servant.rb`.
 
 ```
+	# For rails, you need to add these two lines below
 	require_relative 'application'
 	require_relative 'environment'
 
@@ -42,12 +43,33 @@ First you need to define a class and method that is going to handle the event
 	end
 ```
 
+You can optionally wrap everything inside a worker. Remeber it's going to require sidekiq.
+
+```
+	class OrderEventHandler < Servant::EventHandler
+		set_async_methods :created
+		
+		...
+	end
+```
+
+### Define routes
+
+
+
+```
+	Servant::Router.draw do
+      on "order.created", path: "OrderEventHandler#created"
+    end
+```
+
+
 ### Start Servant
 
 As of now, you have all it needs to handle "order.created" event. You can start servant by tying this command on your console
 
 ```
-	bundle exec servant start -g "notification-service" -e "order.created"
+	bundle exec servant start -g "notification-service"
 ```
 
 Options
@@ -62,7 +84,7 @@ Options
 To test that the servant is running fine. Let's start sending an event. You can use servant gem to send an event like this
 
 ```
-	Servant::Publisher.client.publish(event: "order.created", message: {order_id: 1, user_id: 1})
+	Servant::Publisher.client.publish(event: "order.created", message: {order_id: 1, user_id: 1}, meta: {something: "important"}, correlation_id: "foo")
 ```
 
 or you can use a plain redis client too if you don't want install servant gem on that particular app

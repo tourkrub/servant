@@ -40,13 +40,14 @@ RSpec.describe Servant::EventHandler do
         instance = TestServantEventHandlerFoo.new
 
         instance.instance_variable_set("@on", "foo")
-        instance.instance_variable_set("@request", "message" => { foo: "bar" }, "meta" => { bar: "baz" })
+        instance.instance_variable_set("@request", "message" => { foo: "bar" }, "meta" => { bar: "baz" }, "correlation_id" => "1")
         instance.after_initialize
 
         expect(instance.send("bar")).to eq("foo")
         expect(instance.event).to eq("foo")
         expect(instance.message).to eq(foo: "bar")
         expect(instance.meta).to eq(bar: "baz")
+        expect(instance.correlation_id).to eq("1")
 
         instance.send("foo")
 

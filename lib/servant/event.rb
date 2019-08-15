@@ -10,6 +10,7 @@ module Servant
 
     def parsed_message
       h = {}
+      h["correlation_id"] = message["correlation_id"]
       h["message"] = JSON.parse(message["message"])
       h["meta"] = JSON.parse(message["meta"])
       h

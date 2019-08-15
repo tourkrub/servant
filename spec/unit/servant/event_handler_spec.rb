@@ -24,6 +24,9 @@ RSpec.describe Servant::EventHandler do
 
       class TestServantEventHandlerFoo < Servant::EventHandler
         set_async_methods :foo
+        rescue_from RuntimeError do
+          "rescued"
+        end
 
         def bar
           event
@@ -31,6 +34,14 @@ RSpec.describe Servant::EventHandler do
 
         def foo
           event
+        end
+
+        def baz
+          raise "should raise"
+        end
+
+        def bazbaz
+          raise StandardError, "should raise"
         end
       end
     end
@@ -67,6 +78,28 @@ RSpec.describe Servant::EventHandler do
 
         instance.instance_variable_set("@event", "bar")
         instance.send("bar")
+      end
+    end
+
+    describe "#rescue_from" do
+      it "rescue" do
+        instance = TestServantEventHandlerFoo.new
+
+        instance.instance_variable_set("@on", "baz")
+        instance.instance_variable_set("@request", "message" => { foo: "bar" }, "meta" => { bar: "baz" })
+        instance.after_initialize
+
+        expect { instance.send("baz") }.not_to raise_error(RuntimeError)
+      end
+
+      it "not rescue" do
+        instance = TestServantEventHandlerFoo.new
+
+        instance.instance_variable_set("@on", "bazbaz")
+        instance.instance_variable_set("@request", "message" => { foo: "bar" }, "meta" => { bar: "baz" })
+        instance.after_initialize
+
+        expect { instance.send("bazbaz") }.to raise_error(StandardError)
       end
     end
   end

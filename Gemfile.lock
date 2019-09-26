@@ -104,7 +104,7 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
     thor (0.20.3)
-    tourkrub-toolkit (0.1.1)
+    tourkrub-toolkit (0.1.2)
       dry-struct (~> 1.0.0)
       sidekiq (~> 5.2.7)
     tty-color (0.5.0)
@@ -123,7 +123,7 @@ DEPENDENCIES
   rubocop (~> 0.62.0)
   servant!
   simplecov (~> 0.16.1)
-  tourkrub-toolkit (= 0.1.1)!
+  tourkrub-toolkit (= 0.1.2)!
 
 BUNDLED WITH
    1.17.2

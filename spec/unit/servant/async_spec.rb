@@ -5,7 +5,7 @@ RSpec.describe Servant::Async do
     class TestServantAsyncFoo
       include Servant::Async
 
-      set_async_methods :method_one, :method_two
+      set_async_methods %i[method_one low], :method_two
 
       def initialize(bar = nil, foo = nil, baz = nil)
         @bar = bar
@@ -47,16 +47,21 @@ RSpec.describe Servant::Async do
     end
   end
 
-  describe "#method_one" do
+  describe "#method_three" do
     it "create job in a pool" do
       Sidekiq::Testing.fake! do
         instance = TestServantAsyncFoo.new("bar", "foo", "baz")
-        # instance.method_one
-        # instance.method_two
+        instance.send(:method_one)
 
-        # expect(MethodOneTestServantAsyncFooWorker.jobs.size).to eq(1)
-        # expect(MethodTwoTestServantAsyncFooWorker.jobs.size).to eq(1)
-        expect(instance.method_three).to eq(%w[bar foo baz])
+        expect(MethodOneTestServantAsyncFooWorker.jobs.size).to eq(1)
+        expect(MethodOneTestServantAsyncFooWorker.jobs.first["queue"]).to eq("low")
+
+        instance = TestServantAsyncFoo.new("bar", "foo", "baz")
+        instance.send(:method_two)
+
+        expect(MethodTwoTestServantAsyncFooWorker.jobs.size).to eq(1)
+
+        expect(instance.send(:method_three)).to eq(%w[bar foo baz])
       end
     end
   end

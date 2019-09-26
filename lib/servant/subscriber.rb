@@ -54,6 +54,8 @@ module Servant
       time_start = Time.now.to_f
 
       Servant::Router.navigate(event.name, event.parsed_message)
+
+      connection.xack("event:#{event.name}", group_id, event.id)
     rescue Exception => e # rubocop:disable Lint/RescueException
       stats.incr(:failed)
       stats.log(event, "failed")

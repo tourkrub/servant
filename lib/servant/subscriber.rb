@@ -41,12 +41,20 @@ module Servant
       stats.clean
 
       @running = false
+
+      delete_consumers
       Servant.logger.info "Application is being gracefully stopped"
     end
 
     private
 
     attr_reader :stats
+
+    def delete_consumers
+      events.each do |event|
+        connection.xgroup(:delconsumer, "event:#{event}", group_id, consumer_id)
+      end
+    end
 
     def work(event)
       stats.incr(:processing)

@@ -2,7 +2,6 @@ module Servant
   module Async
     class << self
       def included(base)
-        const_set("ASYNC_METHODS", [])
         base.include(InstanceMethod)
         base.extend(ClassMethod)
       end
@@ -33,8 +32,6 @@ module Servant
     end
 
     module ClassMethod
-      attr_reader :async_methods
-
       def set_async_methods(*to_async_methods) # rubocop:disable Naming/AccessorMethodName
         raise "Sidekiq is requried" unless Object.const_defined?("Sidekiq")
         raise "Tourkrub::Toolkit::AsyncMethod is requried" unless Object.const_defined?("Tourkrub::Toolkit::AsyncMethod")
@@ -50,6 +47,10 @@ module Servant
           agent = Tourkrub::Toolkit::AsyncMethod::Agent.new(new, action, queue, nil)
           agent.send(:worker)
         end
+      end
+
+      def async_methods
+        @async_methods ||= {}
       end
     end
   end

@@ -12,7 +12,7 @@ module Servant
       set("group_id", group_id)
       set("events", events)
 
-      connection.lpush("servant:processors", id)
+      connection.sadd("servant:processors", id)
     end
 
     def incr(key)
@@ -28,7 +28,7 @@ module Servant
         connection.del("servant:#{id}:#{key}")
       end
 
-      connection.lrem("servant:processors", 0, id)
+      connection.srem("servant:processors", id)
     end
 
     def log(event, status = nil)

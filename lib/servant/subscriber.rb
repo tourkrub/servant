@@ -90,9 +90,6 @@ module Servant
       connection.xgroup(:create, "event:#{event}", group_id, "$", mkstream: true)
     rescue StandardError
       nil
-    ensure
-      connection.sadd("events", event)
-      connection.sadd("groups", group_id)
     end
   end
 end

@@ -10,11 +10,23 @@ RSpec.describe Servant::Subscriber do
 
   let(:subscriber) { TestServantSubscriber.new(redis: MockRedis.new, group_id: "foo_1", consumer_id: "bar_1", events: ["foo"]) }
 
+  before do
+    allow_any_instance_of(MockRedis).to receive(:xgroup).and_return(nil)
+  end
+
   describe "#initialize" do
     it "return valid object" do
       expect(subscriber.events_with_namespace).to eq(["event:foo"])
       expect(subscriber.event_offset).to eq("foo" => ">")
       expect(subscriber.running).to eq(true)
+    end
+
+    context "failed to init_group" do
+      it "return nil" do
+        allow_any_instance_of(MockRedis).to receive(:xgroup).and_raise(StandardError)
+
+        expect(subscriber.send(:init_group, "foo")).to be_nil
+      end
     end
   end
 

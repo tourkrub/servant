@@ -41,6 +41,8 @@ module Servant
       stats.clean
 
       @running = false
+
+      delete_consumers
       Servant.logger.info "Application is being gracefully stopped"
     end
 
@@ -48,12 +50,20 @@ module Servant
 
     attr_reader :stats
 
+    def delete_consumers
+      events.each do |event|
+        connection.xgroup(:delconsumer, "event:#{event}", group_id, consumer_id)
+      end
+    end
+
     def work(event)
       stats.incr(:processing)
       Servant.logger.info "Received event - #{event.name}"
       time_start = Time.now.to_f
 
       Servant::Router.navigate(event.name, event.parsed_message)
+
+      connection.xack("event:#{event.name}", group_id, event.id)
     rescue Exception => e # rubocop:disable Lint/RescueException
       stats.incr(:failed)
       stats.log(event, "failed")

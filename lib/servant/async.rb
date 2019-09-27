@@ -10,9 +10,12 @@ module Servant
 
     module InstanceMethod
       def send(method_name, *args, &block)
-        if async_method?(method_name) && not_from_agent
+        method_name = method_name.to_s
+        async_method = self.class.async_methods[method_name]
+
+        if async_method.is_a?(Hash) && not_from_agent
           set_agent
-          Tourkrub::Toolkit::AsyncMethod::Agent.do_async(self, method_name, *args)
+          Tourkrub::Toolkit::AsyncMethod::Agent.do_async(self, method_name, async_method["queue"], *args)
         else
           super
         end
@@ -27,21 +30,24 @@ module Servant
       def not_from_agent
         !@from_agent
       end
-
-      def async_method?(method_name)
-        self.class.const_get("ASYNC_METHODS").include?(method_name)
-      end
     end
 
     module ClassMethod
-      def set_async_methods(*actions) # rubocop:disable Naming/AccessorMethodName
+      attr_reader :async_methods
+
+      def set_async_methods(*to_async_methods) # rubocop:disable Naming/AccessorMethodName
         raise "Sidekiq is requried" unless Object.const_defined?("Sidekiq")
         raise "Tourkrub::Toolkit::AsyncMethod is requried" unless Object.const_defined?("Tourkrub::Toolkit::AsyncMethod")
 
-        const_set("ASYNC_METHODS", actions.map(&:to_s))
+        @async_methods = {}
 
-        actions.each do |action|
-          agent = Tourkrub::Toolkit::AsyncMethod::Agent.new(new, action.to_s, nil)
+        to_async_methods.each do |to_async_method|
+          action, queue = to_async_method.is_a?(Array) ? to_async_method : [to_async_method, nil]
+          action = action.to_s
+
+          @async_methods[action] = { "queue" => queue }
+
+          agent = Tourkrub::Toolkit::AsyncMethod::Agent.new(new, action, queue, nil)
           agent.send(:worker)
         end
       end

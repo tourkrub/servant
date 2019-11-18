@@ -33,6 +33,10 @@ module Servant
         raise Interupt
       end
 
+      trap(:TERM) do
+        raise Interupt
+      end
+
       prepare_events(options[:events])
 
       Servant.logger.info """

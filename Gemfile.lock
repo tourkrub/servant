@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    servant (0.1.6)
+    servant (2.0.0)
       dry-configurable (~> 0.8.2)
       httparty (~> 0.17.0)
       pastel (~> 0.7.2)

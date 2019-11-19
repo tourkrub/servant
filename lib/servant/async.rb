@@ -14,7 +14,7 @@ module Servant
 
         if async_method.is_a?(Hash) && not_from_agent
           set_agent
-          Tourkrub::Toolkit::AsyncMethod::Agent.do_async(self, method_name, async_method["queue"], *args)
+          TourkrubToolkit::AsyncMethod::Agent.do_async(self, method_name, async_method["queue"], *args)
         else
           super
         end
@@ -34,7 +34,7 @@ module Servant
     module ClassMethod
       def set_async_methods(*to_async_methods) # rubocop:disable Naming/AccessorMethodName
         raise "Sidekiq is requried" unless Object.const_defined?("Sidekiq")
-        raise "Tourkrub::Toolkit::AsyncMethod is requried" unless Object.const_defined?("Tourkrub::Toolkit::AsyncMethod")
+        raise "TourkrubToolkit::AsyncMethod is requried" unless Object.const_defined?("TourkrubToolkit::AsyncMethod")
 
         @async_methods = {}
 
@@ -44,7 +44,7 @@ module Servant
 
           @async_methods[action] = { "queue" => queue }
 
-          agent = Tourkrub::Toolkit::AsyncMethod::Agent.new(new, action, queue, nil)
+          agent = TourkrubToolkit::AsyncMethod::Agent.new(new, action, queue, nil)
           agent.send(:worker)
         end
       end

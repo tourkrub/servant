@@ -3,7 +3,7 @@ RSpec.describe Servant::EventHandler do
     describe "define an EventHandler with set_async_methods" do
       it "should raise error" do
         allow(Object).to receive(:const_defined?).with("Sidekiq").and_return(true)
-        allow(Object).to receive(:const_defined?).with("Tourkrub::Toolkit::AsyncMethod").and_return(false)
+        allow(Object).to receive(:const_defined?).with("TourkrubToolkit::AsyncMethod").and_return(false)
 
         expect  do
           class TestServantEventHandlerBar < Servant::EventHandler
@@ -13,14 +13,14 @@ RSpec.describe Servant::EventHandler do
               event
             end
           end
-        end.to raise_error("Tourkrub::Toolkit::AsyncMethod is requried")
+        end.to raise_error("TourkrubToolkit::AsyncMethod is requried")
       end
     end
   end
 
   context "tourkrub-toolkit is installed" do
     before do
-      require "tourkrub/toolkit"
+      require "tourkrub_toolkit"
 
       class TestServantEventHandlerFoo < Servant::EventHandler
         set_async_methods :foo

@@ -1,6 +1,6 @@
 RSpec.describe Servant::Async do
   before do
-    require "tourkrub/toolkit"
+    require "tourkrub_toolkit"
 
     class TestServantAsyncFoo
       include Servant::Async
@@ -35,13 +35,13 @@ RSpec.describe Servant::Async do
     describe "#set_async_methods" do
       it "create worker class for this method" do
         expect(Object.const_defined?("MethodOneTestServantAsyncFooWorker")).to be true
-        expect(MethodOneTestServantAsyncFooWorker.superclass).to eq(Tourkrub::Toolkit::AsyncMethod::Worker)
+        expect(MethodOneTestServantAsyncFooWorker.superclass).to eq(TourkrubToolkit::AsyncMethod::Worker)
       end
 
       context "name with underscore" do
         it "create worker class for this method" do
           expect(Object.const_defined?("MethodTwoTestServantAsyncFooWorker")).to be true
-          expect(MethodTwoTestServantAsyncFooWorker.superclass).to eq(Tourkrub::Toolkit::AsyncMethod::Worker)
+          expect(MethodTwoTestServantAsyncFooWorker.superclass).to eq(TourkrubToolkit::AsyncMethod::Worker)
         end
       end
     end

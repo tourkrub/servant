@@ -58,8 +58,8 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.add_dependency "httparty", "~> 0.17.0"
   spec.add_dependency "pastel", "~> 0.7.2"
   spec.add_dependency "redis", "~> 4.1.1"
-  spec.add_dependency "sidekiq", "~> 5.2.7"
-  spec.add_dependency "thor", "~> 0.20.0"
+  spec.add_dependency "sidekiq", ">= 5.2.7"
+  spec.add_dependency "thor", ">= 0.20.0"
   spec.add_dependency "tourkrub-toolkit", "~> 2.0"
 
   spec.add_development_dependency "bump", "~> 0.8.0"

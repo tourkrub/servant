@@ -10,6 +10,10 @@ module Servant
   class CLI < Thor
     Interupt = Class.new(StandardError)
 
+    def self.exit_on_failure?
+      true
+    end
+
     desc "version", "servant version"
     def version
       require_relative "version"

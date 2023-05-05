@@ -60,7 +60,7 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.add_dependency "redis", "~> 5.0.6"
   spec.add_dependency "sidekiq", ">= 7.1.0"
   spec.add_dependency "thor", ">= 1.2.1"
-  # spec.add_dependency "tourkrub-toolkit", ">= 2.0"
+  spec.add_dependency "tourkrub-toolkit", ">= 0"
 
   spec.add_development_dependency "bump", "~> 0.10.0"
   spec.add_development_dependency "bundler", "~> 2.4.12"

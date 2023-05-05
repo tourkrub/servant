@@ -21,10 +21,10 @@ module Servant
   class Application
     extend Dry::Configurable
 
-    setting :redis, nil
+    setting :redis, default: nil
 
     setting :metrics do
-      setting :agent, nil
+      setting :agent, default: nil
     end
   end
 end
